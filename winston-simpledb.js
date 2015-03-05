@@ -13,10 +13,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 var util = require('util');
-var amazon = require('awssum/lib/amazon/amazon');
-var simpledb = require('awssum/lib/amazon/simpledb');
+var simpledb = require('simpledb');
 var winston = require('winston');
 var UUID = require('uuid-js');
+var _ = require('lodash');
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -25,7 +25,7 @@ var UUID = require('uuid-js');
 // Constructor for the SimpleDB transport object.
 //
 var SimpleDB = exports.SimpleDB = function (options) {
-    options = options || {};
+	options = options || {};
 
     // need the accessKeyId
     if (!options.accessKeyId) {
@@ -35,11 +35,6 @@ var SimpleDB = exports.SimpleDB = function (options) {
     // need the secretAccessKey
     if (!options.secretAccessKey) {
         throw new Error("Required: secretAccessKey for the Amazon account being used.");
-    }
-
-    // need the awsAccountId
-    if (!options.awsAccountId) {
-        throw new Error("Required: awsAccountId for the Amazon account being used.");
     }
 
     // need the domainName
@@ -66,12 +61,11 @@ var SimpleDB = exports.SimpleDB = function (options) {
     }
 
     // create the SimpleDB instance
-    this.sdb = new simpledb.SimpleDB(
-        options.accessKeyId,
-        options.secretAccessKey,
-        options.awsAccountId,
-        options.region
-    );
+    this.sdb = new simpledb.SimpleDB({
+        keyid: options.accessKeyId,
+        secret: options.secretAccessKey,
+        region: options.region
+    });
 };
 
 //
@@ -89,8 +83,7 @@ util.inherits(SimpleDB, winston.Transport);
 //
 SimpleDB.prototype.log = function (level, msg, meta, callback) {
     var self = this;
-
-    // console.log('RIGHT HERE - logging some stuff');
+	// console.log('RIGHT HERE - logging some stuff');
 
     // create the domainName
     var domainName;
@@ -122,8 +115,14 @@ SimpleDB.prototype.log = function (level, msg, meta, callback) {
     var data = {
         level     : level,
         msg       : msg,
-        inserted  : (new Date()).toISOString(),
+		inserted  : (new Date()).toISOString(),
     };
+	
+	// add new attributes
+	if(_.isObject(meta) && meta.attributesLog) {
+		data = _.defaults(data, meta.attributesLog);
+		delete meta.attributesLog;
+	}
 
     // add the meta information if there is any
     if ( meta ) {
@@ -131,11 +130,7 @@ SimpleDB.prototype.log = function (level, msg, meta, callback) {
     }
 
     // store the message
-    this.sdb.putAttributes({
-        domainName : domainName,
-        itemName   : itemName,
-        data       : data,
-    }, function(err, data) {
+    this.sdb.putItem(domainName, itemName, data, function(err, data) {
         // console.log('Error: ', util.inspect(err, true, null));
         // console.log('Data: ', util.inspect(data, true, null));
         if (err) {

@@ -3,9 +3,9 @@
   "description": "A Winston transport for Amazon SimpleDB",
   "version": "0.1.1",
   "author": {
-    "name":"Andrew Chilton",
-    "email":"chilts@appsattic.com",
-    "url":"http://www.appsattic.com/"
+    "name": "Andrew Chilton",
+    "email": "chilts@appsattic.com",
+    "url": "http://www.appsattic.com/"
   },
   "homepage": "https://github.com/appsattic/winston-simpledb",
   "contributors": [],
@@ -13,14 +13,24 @@
     "type": "git",
     "url": "git://github.com/appsattic/winston-simpledb.git"
   },
-  "keywords": ["logging", "sysadmin", "tools", "winston", "amazon", "simpledb", "awssum"],
+  "keywords": [
+    "logging",
+    "sysadmin",
+    "tools",
+    "winston",
+    "amazon",
+    "simpledb",
+    "awssum"
+  ],
   "dependencies": {
     "awssum": ">= 0.1.2",
+    "lodash": "^3.3.1",
+    "simpledb": "^0.1.0",
     "uuid-js": ">= 0.7.4"
   },
   "devDependencies": {
     "winston": ">= 0.5.6",
-    "vows":">= 0.5.13"
+    "vows": ">= 0.5.13"
   },
   "main": "./winston-simpledb",
   "scripts": {
@@ -29,8 +39,10 @@
   "engines": {
     "node": ">= 0.4.0"
   },
-  "licenses": [{
-    "type": "MIT",
-    "url": "http://github.com/appsattic/winston-simpledb/raw/master/LICENSE"
-  }]
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/appsattic/winston-simpledb/raw/master/LICENSE"
+    }
+  ]
 }
